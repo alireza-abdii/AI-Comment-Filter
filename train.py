@@ -44,17 +44,14 @@ def download_and_prepare_dataset():
         # Display class mapping
         label_map = {i: label for i, label in enumerate(label_encoder.classes_)}
         print("Class mapping:", label_map)
-        
-        # Convert to Hugging Face Dataset object
-        dataset = Dataset.from_pandas(df[['comment_normalized', 'label']])
-        
+
         # --- Use a smaller subset for faster training ---
         # Select a small subset of the data
         # Using a very small number for testing purposes.
         if len(dataset) > 2000:
              dataset = dataset.select(range(2000))
         print(f"✅ Dataset prepared and subsetted to {len(dataset)} rows.")
-        
+
         print("✅ Dataset prepared successfully!")
         return dataset, label_map
     except Exception as e:
@@ -63,7 +60,7 @@ def download_and_prepare_dataset():
 
 def main():
     """Main function to run the training pipeline."""
-    
+
     # --- 2. Load and Prepare Data ---
     dataset, label_map = download_and_prepare_dataset()
 
@@ -79,7 +76,7 @@ def main():
 
     print("Tokenizing dataset...")
     tokenized_dataset = dataset.map(preprocess_function, batched=True)
-    
+
     # Split dataset into training and evaluation sets
     splits = tokenized_dataset.train_test_split(test_size=0.1, seed=42)
     train_dataset = splits['train']
@@ -90,7 +87,7 @@ def main():
     # --- 4. Model Loading ---
     print("\n--- Loading pre-trained model ---")
     model = AutoModelForSequenceClassification.from_pretrained(
-        MODEL_NAME, 
+
         num_labels=len(label_map),
         id2label={i: label for i, label in label_map.items()},
         label2id={label: i for i, label in label_map.items()}
@@ -147,10 +144,7 @@ def main():
     print(f"\n--- Saving model and tokenizer to {OUTPUT_DIR} ---")
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-        
-    trainer.save_model(OUTPUT_DIR)
-    tokenizer.save_pretrained(OUTPUT_DIR)
-    
+
     print(f"✅ Model and tokenizer saved successfully to {OUTPUT_DIR}")
 
 if __name__ == "__main__":

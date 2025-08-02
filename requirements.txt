@@ -1,0 +1,14 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy==1.26.2
+pandas==2.2.2
+torch
+torchvision
+torchaudio
+datasets==2.14.0
+transformers==4.41.0
+pyarrow==14.0.2
+accelerate
+scikit-learn
+fastapi
+uvicorn
+python-multipart
