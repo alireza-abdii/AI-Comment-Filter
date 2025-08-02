@@ -30,7 +30,7 @@ def download_and_prepare_dataset():
         # Clean up columns - keep only the ones we need
         expected_columns = ['comment_normalized', 'class']
         df = df[expected_columns]
-
+        
         # Drop rows with missing values in 'class' or 'comment_normalized'
         df.dropna(subset=['class', 'comment_normalized'], inplace=True)
         df = df[df['comment_normalized'].str.strip() != '']
@@ -44,9 +44,6 @@ def download_and_prepare_dataset():
         # Display class mapping
         label_map = {i: label for i, label in enumerate(label_encoder.classes_)}
         print("Class mapping:", label_map)
-
-        # Convert to Hugging Face Dataset object
-        dataset = Dataset.from_pandas(df[['comment_normalized', 'label']])
 
         # --- Use a smaller subset for faster training ---
         # Select a small subset of the data
@@ -90,7 +87,7 @@ def main():
     # --- 4. Model Loading ---
     print("\n--- Loading pre-trained model ---")
     model = AutoModelForSequenceClassification.from_pretrained(
-        MODEL_NAME,
+
         num_labels=len(label_map),
         id2label={i: label for i, label in label_map.items()},
         label2id={label: i for i, label in label_map.items()}
@@ -147,9 +144,6 @@ def main():
     print(f"\n--- Saving model and tokenizer to {OUTPUT_DIR} ---")
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-
-    trainer.save_model(OUTPUT_DIR)
-    tokenizer.save_pretrained(OUTPUT_DIR)
 
     print(f"✅ Model and tokenizer saved successfully to {OUTPUT_DIR}")
 
